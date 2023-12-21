@@ -30,8 +30,8 @@ namespace SegurancaJWT.Services
             var ci = new ClaimsIdentity();
 
             ci.AddClaim(new Claim("UsuarioId", user.UsuarioId.ToString()));
-            ci.AddClaim(new Claim(ClaimTypes.Name, user.Email.EnderecoEmail));
-            ci.AddClaim(new Claim(ClaimTypes.Email, user.Email.EnderecoEmail));
+            ci.AddClaim(new Claim(ClaimTypes.Name, user.Email));
+            ci.AddClaim(new Claim(ClaimTypes.Email, user.Email));
 
             return ci;
         }

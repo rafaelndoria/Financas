@@ -1,5 +1,6 @@
 using Financas.Data;
 using Financas.Repositories;
+using Financas.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using SegurancaJWT.Services;
@@ -32,6 +33,8 @@ builder.Services.AddAuthentication(opt =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["jwt:secrectKey"]))
     };
 });
+
+builder.Services.AddScoped<CryptService>();
 
 var app = builder.Build();
 
