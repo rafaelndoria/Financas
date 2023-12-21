@@ -35,6 +35,7 @@ namespace Financas.Repositories
         {
             try
             {
+                var atualizar = false;
                 var parametros = new DynamicParameters();
                 parametros.Add("Id", id);
 
@@ -45,11 +46,13 @@ namespace Financas.Repositories
                 {
                     sql += "Nome = @Nome,";
                     parametros.Add("Nome", usuario.Nome);
+                    atualizar = true;
                 }
                 if (usuario.Email != null)
                 {
                     sql += "Email = @Email,";
                     parametros.Add("Email", usuario.Email);
+                    atualizar = true;
                 }
                 if (usuario.Senha != null)
                 {
@@ -57,7 +60,12 @@ namespace Financas.Repositories
                     var hash = crypt.CreateHashPassword(usuario.Senha);
                     sql += "Senha = @Senha,";
                     parametros.Add("Senha", hash);
+                    atualizar = true;
                 }
+
+                if (!atualizar)
+                    return false;
+
                 if (sql.EndsWith(","))
                 {
                     sql = sql.Remove(sql.Length - 1);
@@ -91,8 +99,8 @@ namespace Financas.Repositories
         public Usuario GetById(int id)
         {
             sql = "";
-            sql = "SELECT * FROM Usuario U WHERE U.Email = @Email";
-            return _connection.Connection.QueryFirstOrDefault<Usuario>("SELECT * FROM Usuario U WHERE U.UsuarioId = @Id", new { Id = id });
+            sql = "SELECT * FROM Usuario U WHERE U.UsuarioId = @Id";
+            return _connection.Connection.QueryFirstOrDefault<Usuario>(sql, new { Id = id });
         }
 
         public bool Insert(Usuario usuario)

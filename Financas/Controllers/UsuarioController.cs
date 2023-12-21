@@ -91,7 +91,7 @@ namespace Financas.Controllers
         {
             try
             {
-                var user = _connection.GetById(id);
+                var user = _connection.Delete(id);
 
                 return Ok();
             }
