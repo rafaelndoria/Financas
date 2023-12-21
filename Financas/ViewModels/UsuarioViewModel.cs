@@ -1,6 +1,6 @@
 ﻿namespace Financas.ViewModels
 {
-    public class UsuarioCadastroViewModel
+    public class UsuarioViewModel
     {
         public string Email { get; set; }
         public string Nome { get; set; }

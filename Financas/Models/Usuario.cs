@@ -1,4 +1,6 @@
-﻿namespace Financas.Models
+﻿using Financas.Services;
+
+namespace Financas.Models
 {
     public class Usuario
     {
@@ -10,7 +12,7 @@
         {
             Nome = nome;
             Email = email;
-            Senha = senha;
+            Senha = CriptografarSenha(senha);
             DataNascimento = dataNascimento.Date;
             DataCadastro = DateTime.Now;
 
@@ -27,6 +29,17 @@
 
         public List<Conta> Contas { get; set; }
         public List<Balanco> Balancos { get; set; }   
+
+        private string CriptografarSenha(string senha)
+        {
+            var crypt = new CryptService();
+            return crypt.CreateHashPassword(senha);
+        }
+
+        public void SetId(int id)
+        {
+            UsuarioId = id;
+        }
     }
 }
  
