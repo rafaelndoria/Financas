@@ -1,15 +1,17 @@
-﻿using Financas.ObjectValues;
-
-namespace Financas.Models
+﻿namespace Financas.Models
 {
     public class Usuario
     {
-        public Usuario(string nome, Email email, Senha senha, DateTime dataNascimento)
+        public Usuario()
+        {
+            
+        }
+        public Usuario(string nome, string email, string senha, DateTime dataNascimento)
         {
             Nome = nome;
             Email = email;
             Senha = senha;
-            DataNascimento = dataNascimento;
+            DataNascimento = dataNascimento.Date;
             DataCadastro = DateTime.Now;
 
             Contas = new List<Conta>();
@@ -18,8 +20,8 @@ namespace Financas.Models
 
         public int UsuarioId { get; private set; }
         public string Nome { get; private set; }
-        public Email Email { get; private set; }
-        public Senha Senha { get; private set; }
+        public string Email { get; private set; }
+        public string Senha { get; private set; }
         public DateTime DataNascimento { get; private set; }
         public DateTime DataCadastro { get; private set; }
 

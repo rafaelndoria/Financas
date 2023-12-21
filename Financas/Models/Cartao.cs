@@ -2,6 +2,10 @@
 {
     public class Cartao
     {
+        public Cartao()
+        {
+            
+        }
         public Cartao(string nome, double limiteCredito, int principal, int contaId, Conta conta, double? limiteCreditoAtual = 0)
         {
             Nome = nome;

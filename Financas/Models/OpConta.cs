@@ -2,6 +2,10 @@
 {
     public class OpConta
     {
+        public OpConta()
+        {
+            
+        }
         public OpConta(string descricao, double valor, DateTime dataOp, int contaId, Conta conta, int categoriaOpId, CategoriaOp categoriaOp, int tipoOpId, TipoOp tipoOp)
         {
             Descricao = descricao;

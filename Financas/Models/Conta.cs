@@ -2,6 +2,10 @@
 {
     public class Conta
     {
+        public Conta()
+        {
+            
+        }
         public Conta(string nome, int principal, double balanco, int usuarioId, Usuario usuario)
         {
             Nome = nome;

@@ -2,6 +2,10 @@
 {
     public class TipoOpCartao
     {
+        public TipoOpCartao()
+        {
+            
+        }
         public TipoOpCartao(string nome)
         {
             Nome = nome;

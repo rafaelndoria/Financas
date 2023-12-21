@@ -2,6 +2,10 @@
 {
     public class TipoOp
     {
+        public TipoOp()
+        {
+            
+        }
         public TipoOp(string nome)
         {
             Nome = nome;

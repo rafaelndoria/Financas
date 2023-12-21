@@ -2,6 +2,10 @@
 {
     public class OpCartao
     {
+        public OpCartao()
+        {
+            
+        }
         public OpCartao(string descricao, double valor, DateTime dataOp, int parcelado, int quantidade, int parcela, int cartaoId, Cartao cartao, int categoriaOpId, CategoriaOp categoriaOp, int tipoOpCartaoId, TipoOpCartao tipoOpCartao)
         {
             Descricao = descricao;

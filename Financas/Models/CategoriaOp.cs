@@ -2,6 +2,10 @@
 {
     public class CategoriaOp
     {
+        public CategoriaOp()
+        {
+            
+        }
         public CategoriaOp(string nome, string? descricao)
         {
             Nome = nome;

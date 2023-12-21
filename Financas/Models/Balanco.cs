@@ -2,6 +2,10 @@
 {
     public class Balanco
     {
+        public Balanco()
+        {
+            
+        }
         public Balanco(int mes, int ano, int usuarioId, Usuario usuario, double? despesa = 0, double? receita = 0)
         {
             Mes = mes;
