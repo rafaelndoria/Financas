@@ -8,7 +8,7 @@ namespace Financas.Extensions
         {
             try
             {
-                var id = user.Claims.FirstOrDefault(x => x.Type == "id")?.Value ?? "0";
+                var id = user.Claims.FirstOrDefault(x => x.Type == "UsuarioId")?.Value ?? "0";
                 return int.Parse(id);
             }
             catch
@@ -32,7 +32,7 @@ namespace Financas.Extensions
         {
             try
             {
-                var name = user.Claims.FirstOrDefault(x => x.Type == "name")?.Value ?? string.Empty;
+                var name = user.Claims.FirstOrDefault(x => x.Type == "Nome")?.Value ?? string.Empty;
                 return name;
             }
             catch

@@ -21,7 +21,7 @@ namespace Financas.Repositories
             try
             {
                 sql = "";
-                sql = "DELETE FROM Usuario U WHERE U.UsuarioId = @Id";
+                sql = "DELETE FROM Usuario WHERE UsuarioId = @Id";
                 _connection.Connection.Execute(sql, new { Id = id });
                 return true;
             }
@@ -42,19 +42,19 @@ namespace Financas.Repositories
                 sql = "";
                 sql = "UPDATE Usuario SET ";
 
-                if(usuario.Nome != null)
+                if(usuario.Nome.Length > 0)
                 {
                     sql += "Nome = @Nome,";
                     parametros.Add("Nome", usuario.Nome);
                     atualizar = true;
                 }
-                if (usuario.Email != null)
+                if (usuario.Email.Length > 0)
                 {
                     sql += "Email = @Email,";
                     parametros.Add("Email", usuario.Email);
                     atualizar = true;
                 }
-                if (usuario.Senha != null)
+                if (usuario.Senha.Length > 0)
                 {
                     var crypt = new CryptService();
                     var hash = crypt.CreateHashPassword(usuario.Senha);

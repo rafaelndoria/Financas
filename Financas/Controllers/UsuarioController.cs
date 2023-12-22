@@ -29,7 +29,7 @@ namespace Financas.Controllers
         {
             try
             {
-                var user = new Usuario(model.Nome, model.Email, model.Senha, model.DataNascimento);
+                var user = new Usuario(model.Nome, model.Email, model.Senha, DateTime.Parse(model.DataNascimento));
                 var usuarioAdicionado = _connection.Insert(user);
 
                 if (!usuarioAdicionado)
@@ -86,7 +86,7 @@ namespace Financas.Controllers
             return Ok(user);
         }
 
-        [HttpDelete]
+        [HttpDelete("{id:int}")]
         public IActionResult Delete(int id)
         {
             try
