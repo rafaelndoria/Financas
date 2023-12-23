@@ -6,13 +6,12 @@
         {
             
         }
-        public Conta(string nome, int principal, double balanco, int usuarioId, Usuario usuario)
+        public Conta(string nome, int principal, double balanco, int usuarioId)
         {
             Nome = nome;
             Principal = principal;
             Balanco = balanco;
             UsuarioId = usuarioId;
-            Usuario = usuario;
             DataCadastro = DateTime.Now;
 
             Cartoes = new List<Cartao>();

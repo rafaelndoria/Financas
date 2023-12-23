@@ -17,7 +17,7 @@ CREATE TABLE Conta (
 	Nome VARCHAR(50) NOT NULL,
 	Principal BIT NOT NULL,
 	Balanco DECIMAL(14,2) NOT NULL,
-	DataCadastro DATETIME NOT NULL,
+	DataCadastro DATETIME,
 	UsuarioId INT NOT NULL,
 
 	CONSTRAINT PK_ContaId PRIMARY KEY (ContaId)
@@ -115,7 +115,8 @@ CREATE TABLE Balanco (
 ALTER TABLE Conta
 ADD CONSTRAINT FK_Conta_Usuario
 FOREIGN KEY (UsuarioId)
-REFERENCES Usuario(UsuarioId);
+REFERENCES Usuario(UsuarioId)
+ON DELETE CASCADE;
 
 --- Tabela Cartao
 ALTER TABLE Cartao
