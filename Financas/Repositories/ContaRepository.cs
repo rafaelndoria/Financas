@@ -130,5 +130,17 @@ namespace Financas.Repositories
                 return false;
             }
         }
+
+        public bool VerificarExisteConta(int usuarioId, int contaId)
+        {
+            sql = "";
+            sql = "SELECT COUNT(*) FROM Conta WHERE ContaId = @ContaId AND UsuarioId = @UsuarioId";
+            var possuiConta = _connection.Connection.Query<int>(sql, new { ContaId = contaId, UsuarioId = usuarioId }).Single();
+
+            if (possuiConta == 0)
+                return false;
+
+            return true;
+        }
     }
 }
