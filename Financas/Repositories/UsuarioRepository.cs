@@ -99,9 +99,27 @@ namespace Financas.Repositories
 
         public Usuario GetById(int id)
         {
+            Usuario usuario = null;
+
             sql = "";
-            sql = "SELECT * FROM Usuario U WHERE U.UsuarioId = @Id";
-            return _connection.Connection.QueryFirstOrDefault<Usuario>(sql, new { Id = id });
+            sql = "SELECT U.*, C.* FROM Usuario U LEFT JOIN Conta C ON U.UsuarioId = C.UsuarioId WHERE U.UsuarioId = @Id";
+
+            _connection.Connection.Query<Usuario, Conta, Usuario>(
+                sql,
+                (usuarioConsulta, contaConsulta) =>
+                {
+                    if(usuario == null)
+                    {
+                        usuario = usuarioConsulta;
+                        usuario.Contas = new List<Conta>();
+                    }
+                    usuario.Contas.Add(contaConsulta);
+                    return usuario;
+                },
+                new { Id = id },
+                splitOn: "UsuarioId,ContaId");
+
+            return usuario;
         }
 
         public bool Insert(Usuario usuario)
