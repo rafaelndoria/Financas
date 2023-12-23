@@ -19,6 +19,8 @@ builder.Services.AddScoped<IDbConnectionProvider>(_ =>
     new DbConnectionProvider(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Financas;Integrated Security=True;Connect Timeout=30;Encrypt=False;"));
 
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<IContaRepository, ContaRepository>();
+
 builder.Services.AddTransient<JwtTokenService>();
 builder.Services.AddAuthentication(opt =>
 {
