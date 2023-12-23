@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Financas.Data;
 using Financas.Models;
+using Financas.Repositories.Interfaces;
 using Financas.Services;
 using Financas.ViewModels;
 

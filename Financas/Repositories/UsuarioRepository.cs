@@ -3,6 +3,7 @@ using Financas.Models;
 using Dapper;
 using Financas.ViewModels;
 using Financas.Services;
+using Financas.Repositories.Interfaces;
 
 namespace Financas.Repositories
 {

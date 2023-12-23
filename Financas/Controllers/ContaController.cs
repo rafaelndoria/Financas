@@ -1,6 +1,6 @@
 ﻿using Financas.Extensions;
 using Financas.Models;
-using Financas.Repositories;
+using Financas.Repositories.Interfaces;
 using Financas.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

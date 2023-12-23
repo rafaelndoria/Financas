@@ -1,5 +1,6 @@
 using Financas.Data;
 using Financas.Repositories;
+using Financas.Repositories.Interfaces;
 using Financas.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;

@@ -1,7 +1,7 @@
 ﻿using Financas.Models;
 using Financas.ViewModels;
 
-namespace Financas.Repositories
+namespace Financas.Repositories.Interfaces
 {
     public interface IContaRepository
     {
