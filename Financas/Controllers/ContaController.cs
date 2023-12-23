@@ -13,24 +13,24 @@ namespace Financas.Controllers
     [ApiController]
     public class ContaController : ControllerBase
     {
-        private readonly IContaRepository _connection;
+        private readonly IContaRepository _contaRepository;
 
-        public ContaController(IContaRepository connection)
+        public ContaController(IContaRepository contaRepository)
         {
-            _connection = connection;
+            _contaRepository = contaRepository;
         }
 
         [HttpGet]
         public IActionResult Get()
         {
-            var contas = _connection.Get();
+            var contas = _contaRepository.Get();
             return Ok(contas);
         }
 
         [HttpGet("{id:int}")]
         public IActionResult GetBtId(int id)
         {
-            var conta = _connection.GetById(id);
+            var conta = _contaRepository.GetById(id);
             return Ok(conta);
         }
 
@@ -41,7 +41,7 @@ namespace Financas.Controllers
             ClaimsPrincipal usuarioLogado = HttpContext.User;
             var usuarioId = usuarioLogado.Id();
 
-            var contas = _connection.Get(usuarioId);
+            var contas = _contaRepository.Get(usuarioId);
             return Ok(contas);
         }
 
@@ -56,13 +56,13 @@ namespace Financas.Controllers
             {
                 if (model.Principal == 1)
                 {
-                    if (_connection.PossuiContaPrincipal(usuarioId))
+                    if (_contaRepository.PossuiContaPrincipal(usuarioId))
                         return BadRequest("Usuario pode ter apenas uma conta como ativa");
                 }
                    
                 var conta = new Conta(model.Nome, model.Principal, (double)model.Balanco, usuarioId);
 
-                if (!_connection.Create(conta))
+                if (!_contaRepository.Create(conta))
                     return BadRequest("Nao foi possivel criar a conta");
 
                 return Ok("Conta criada com sucesso");
@@ -79,7 +79,7 @@ namespace Financas.Controllers
         {
             try
             {
-                if (!_connection.Delete(id))
+                if (!_contaRepository.Delete(id))
                     return BadRequest("Não foi possivel deletar a conta");
 
                 return Ok("Conta deletada com sucesso");
@@ -99,7 +99,7 @@ namespace Financas.Controllers
 
             try
             {
-                if (!_connection.Update(id, model, usuarioId))
+                if (!_contaRepository.Update(id, model, usuarioId))
                     return BadRequest("Nao foi possivel atualizar a conta");
 
                 return Ok("Conta Atualizada com sucesso");

@@ -14,12 +14,12 @@ namespace Financas.Controllers
     {
         private readonly JwtTokenService _jwt;
         private readonly CryptService _crypt;
-        private readonly IUsuarioRepository _connection;
+        private readonly IUsuarioRepository _usuarioRepository;
 
-        public UsuarioController(JwtTokenService jwt, IUsuarioRepository connection, CryptService crypt)
+        public UsuarioController(JwtTokenService jwt, IUsuarioRepository usuarioRepository, CryptService crypt)
         {
             _jwt = jwt;
-            _connection = connection;
+            _usuarioRepository = usuarioRepository;
             _crypt = crypt;
         }
 
@@ -30,12 +30,12 @@ namespace Financas.Controllers
             try
             {
                 var user = new Usuario(model.Nome, model.Email, model.Senha, DateTime.Parse(model.DataNascimento));
-                var usuarioAdicionado = _connection.Insert(user);
+                var usuarioAdicionado = _usuarioRepository.Insert(user);
 
                 if (!usuarioAdicionado)
                     return BadRequest("Nao foi possivel incluir o usuario");
 
-                var userId = _connection.GetId(user.Email);
+                var userId = _usuarioRepository.GetId(user.Email);
                 user.SetId(userId);
 
                 var token = _jwt.Create(user);
@@ -54,7 +54,7 @@ namespace Financas.Controllers
         {
             try
             {
-                var user = _connection.GetByEmail(model.Email);
+                var user = _usuarioRepository.GetByEmail(model.Email);
 
                 if (user == null)
                     return Unauthorized("Email não cadastrado no sistema");
@@ -75,14 +75,14 @@ namespace Financas.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            var users = _connection.Get();
+            var users = _usuarioRepository.Get();
             return Ok(users);
         }
 
         [HttpGet("{id:int}")]
         public IActionResult GetById(int id)
         {
-            var user = _connection.GetById(id);
+            var user = _usuarioRepository.GetById(id);
             return Ok(user);
         }
 
@@ -91,7 +91,7 @@ namespace Financas.Controllers
         {
             try
             {
-                var user = _connection.Delete(id);
+                var user = _usuarioRepository.Delete(id);
 
                 return Ok();
             }
@@ -106,7 +106,7 @@ namespace Financas.Controllers
         {
             try
             {
-                var atualizado = _connection.Update(id, model);
+                var atualizado = _usuarioRepository.Update(id, model);
 
                 if (!atualizado)
                     return BadRequest("Nao foi possivel atualizar o usuario");
