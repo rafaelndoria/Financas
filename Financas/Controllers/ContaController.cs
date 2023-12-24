@@ -1,11 +1,9 @@
-﻿using Financas.Extensions;
+﻿using Financas.Helpers;
 using Financas.Models;
 using Financas.Repositories.Interfaces;
 using Financas.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace Financas.Controllers
 {
@@ -38,8 +36,7 @@ namespace Financas.Controllers
         [Authorize]
         public IActionResult GetContaUser()
         {
-            ClaimsPrincipal usuarioLogado = HttpContext.User;
-            var usuarioId = usuarioLogado.Id();
+            var usuarioId = UsuarioLogadoHelper.ObterUsuarioId(HttpContext);
 
             var contas = _contaRepository.Get(usuarioId);
             return Ok(contas);
@@ -49,8 +46,7 @@ namespace Financas.Controllers
         [Authorize]
         public IActionResult Create(ContaViewModel model)
         {
-            ClaimsPrincipal usuarioLogado = HttpContext.User;
-            var usuarioId = usuarioLogado.Id();
+            var usuarioId = UsuarioLogadoHelper.ObterUsuarioId(HttpContext);
 
             try
             {
@@ -94,8 +90,7 @@ namespace Financas.Controllers
         [Authorize]
         public IActionResult Update(ContaViewModel model, int id)
         {
-            ClaimsPrincipal usuarioLogado = HttpContext.User;
-            var usuarioId = usuarioLogado.Id();
+            var usuarioId = UsuarioLogadoHelper.ObterUsuarioId(HttpContext);
 
             try
             {
