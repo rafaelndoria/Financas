@@ -85,6 +85,14 @@ namespace Financas.Repositories
             return true;
         }
 
+        public bool RemoverContaPreferida()
+        {
+            sql = "";
+            sql = "UPDATE Conta SET Principal = 0 WHERE Principal = 1";
+            _connection.Connection.Execute(sql);
+            return true;
+        }
+
         public bool Update(int ContaId, ContaViewModel conta, int usuarioId)
         {
             try
@@ -104,8 +112,10 @@ namespace Financas.Repositories
                 }
                 if (conta.Principal > 0)
                 {
-                    if (conta.Principal == 1 && PossuiContaPrincipal(usuarioId))
-                        return false;
+                    if (conta.Principal == 1)
+                    {
+                        RemoverContaPreferida();
+                    }
 
                     sql += "Principal = @Principal,";
                     parametros.Add("Princiapal", conta.Principal);
