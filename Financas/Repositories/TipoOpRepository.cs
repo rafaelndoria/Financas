@@ -5,7 +5,7 @@ using Financas.Repositories.Interfaces;
 
 namespace Financas.Repositories
 {
-    public class TipoOpRepository : ITipoOpCartaoRepository
+    public class TipoOpRepository : ITipoOpRepository
     {
         private readonly IDbConnectionProvider _connection;
         string sql = "";
@@ -15,11 +15,11 @@ namespace Financas.Repositories
             _connection = connection;
         }
 
-        public List<TipoOpCartao> Get()
+        public List<TipoOp> Get()
         {
             sql = "";
-            sql = "SELECT * FROM TipoOpCartao";
-            return _connection.Connection.Query<TipoOpCartao>(sql).ToList();
+            sql = "SELECT * FROM TipoOp";
+            return _connection.Connection.Query<TipoOp>(sql).ToList();
         }
     }
 }

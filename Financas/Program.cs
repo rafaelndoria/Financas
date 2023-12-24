@@ -23,6 +23,7 @@ builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IContaRepository, ContaRepository>();
 builder.Services.AddScoped<ICartaoRepository, CartaoRepository>();
 builder.Services.AddScoped<ITipoOpCartaoRepository, TipoOpCartaoRepository>();
+builder.Services.AddScoped<ITipoOpRepository, TipoOpRepository>();
 
 builder.Services.AddTransient<JwtTokenService>();
 builder.Services.AddAuthentication(opt =>
