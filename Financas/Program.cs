@@ -21,6 +21,7 @@ builder.Services.AddScoped<IDbConnectionProvider>(_ =>
 
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IContaRepository, ContaRepository>();
+builder.Services.AddScoped<ICartaoRepository, CartaoRepository>();
 
 builder.Services.AddTransient<JwtTokenService>();
 builder.Services.AddAuthentication(opt =>
