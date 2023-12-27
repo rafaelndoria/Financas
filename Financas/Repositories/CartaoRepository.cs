@@ -46,6 +46,13 @@ namespace Financas.Repositories
             return _connection.Connection.QueryFirst<Cartao>(sql, new { Id = id });
         }
 
+        public int GetCartaoPrincipal(int usuarioId)
+        {
+            sql = "";
+            sql = "SELECT C.CartaoId FROM Cartao C JOIN Conta CT ON C.ContaId = CT.ContaId WHERE C.Principal = 1 AND CT.UsuarioId = @Id";
+            return _connection.Connection.QueryFirstOrDefault<int>(sql, new { Id = usuarioId});
+        }
+
         public List<Cartao> GetCartaoUsuarioLogado(int usuarioId)
         {
             sql = "";

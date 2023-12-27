@@ -13,5 +13,6 @@ namespace Financas.Repositories.Interfaces
         bool Delete(int cartaoId);
         bool Update(int cartaoId, CartaoViewModel cartao);
         bool RemoverCartaoPreferido();
+        int GetCartaoPrincipal(int usuarioId);
     }
 }
