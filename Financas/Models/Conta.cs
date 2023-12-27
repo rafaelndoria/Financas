@@ -29,5 +29,6 @@
 
         public List<Cartao> Cartoes { get; set; }
         public List<OpConta> OpsConta { get; set; } 
+        public List<Titulo> Titulos { get; set; } 
     }
 }

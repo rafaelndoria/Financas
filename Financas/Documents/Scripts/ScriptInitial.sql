@@ -108,6 +108,23 @@ CREATE TABLE Balanco (
 	INDEX idx_Link (Link)
 );
 
+--Titulo
+CREATE TABLE Titulo (
+	TituloId INT IDENTITY(1,1),
+	Descricao VARCHAR(255),
+	Observacao TEXT,
+	Parcela INT NOT NULL,
+	NumeroParcelas INT NOT NULL,
+	Valor DECIMAL(14,2) NOT NULL,
+	TipoTitulo INT NOT NULL,
+	StatusTitulo VARCHAR(20),
+	DataTitulo DATETIME,
+	DataPagamento DATETIME,
+	ContaId INT NOT NULL,
+
+	CONSTRAINT PK_TituloId PRIMARY KEY (TituloId)
+);
+
 
 
 -- FK
@@ -162,7 +179,11 @@ ADD CONSTRAINT FK_Balanco_Usuario
 FOREIGN KEY (UsuarioId)
 REFERENCES Usuario(UsuarioId);
 
-
+---Tabela Titulo
+ALTER TABLE Titulo
+ADD CONSTRAINT FK_Conta_Titulo
+FOREIGN KEY (ContaId) 
+REFERENCES Conta(ContaId);
 
 
 
