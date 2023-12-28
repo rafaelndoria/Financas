@@ -16,6 +16,7 @@
             LimiteCreditoAtual = limiteCreditoAtual == 0 ? limiteCredito : limiteCreditoAtual;
 
             OpsCartao = new List<OpCartao>();
+            Faturas = new List<Fatura>();
         }
 
         public int CartaoId { get; private set; }
@@ -28,6 +29,7 @@
         public int ContaId { get; private set; }
         public Conta Conta { get; private set; }
         public List<OpCartao> OpsCartao { get; set; }
+        public List<Fatura> Faturas { get; set; }
 
         public void RemoverLimite(double valor)
         {

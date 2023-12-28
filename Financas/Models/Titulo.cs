@@ -2,6 +2,10 @@
 {
     public class Titulo
     {
+        public Titulo()
+        {
+            
+        }
         public Titulo(string descricao, string observacao, int parcela, int numeroParcelas, decimal valor, int tipoTitulo, int contaId)
         {
             Descricao = descricao;

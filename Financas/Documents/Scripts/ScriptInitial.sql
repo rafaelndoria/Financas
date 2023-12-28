@@ -36,6 +36,26 @@ CREATE TABLE Cartao (
 	CONSTRAINT PK_CartaoId PRIMARY KEY (CartaoId)
 );
 
+-- Fatura
+CREATE TABLE Fatura (
+	FaturaId INT IDENTITY(1,1),
+	Valor DECIMAL(14,2) NOT NULL,
+	Mes INT NOT NULL,
+	Ano INT NOT NULL,
+	CartaoId INT NOT NULL
+
+	CONSTRAINT PK_FaturaId PRIMARY KEY (FaturaId)
+);
+
+-- Pagamento Fatura
+CREATE TABLE PagamentoFatura (
+	PagamentoFaturaId INT IDENTITY(1,1),
+	ValorPago DECIMAL(14,2) NOT NULL,
+	FaturaId INT NOT NULL
+
+	CONSTRAINT PK_PagamentoFaturaId PRIMARY KEY (PagamentoFaturaId)
+);
+
 -- Tipo Operação
 CREATE TABLE TipoOp (
 	TipoOpId INT IDENTITY(1,1),
@@ -139,6 +159,18 @@ ALTER TABLE Cartao
 ADD CONSTRAINT FK_Cartao_Conta
 FOREIGN KEY (ContaId)
 REFERENCES Conta(ContaId);
+
+--- Tabela Fatura
+ALTER TABLE Fatura
+ADD CONSTRAINT FK_Fatura_Cartao
+FOREIGN KEY (CartaoId)
+REFERENCES Cartao(CartaoId);
+
+-- Tabela PagamentoFatura
+ALTER TABLE PagamentoFatura
+ADD CONSTRAINT FK_PagamentoFatura_Fatura
+FOREIGN KEY (FaturaId)
+REFERENCES Fatura(FaturaId);
 
 --- Tabela OpCartao
 ALTER TABLE OpCartao
