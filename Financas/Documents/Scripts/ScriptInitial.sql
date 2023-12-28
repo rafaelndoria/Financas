@@ -69,7 +69,6 @@ CREATE TABLE OpCartao (
 	DataOp DATETIME NOT NULL,
 	Parcelado BIT NOT NULL,
 	QuantidadeParcelas INT NOT NULL,
-	Parcela INT,
 	ValorPorParcela DECIMAL(14,2),
 	CartaoId INT NOT NULL,
 	CategoriaOpId INT NOT NULL,
