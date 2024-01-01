@@ -13,5 +13,6 @@ namespace Financas.Repositories.Interfaces
         bool Update(int ContaId, ContaViewModel model, int usuarioId);
         bool VerificarExisteConta(int usuarioId, int contaId);
         bool RemoverContaPreferida();
+        double GetSaldoConta(int contaId);
     }
 }

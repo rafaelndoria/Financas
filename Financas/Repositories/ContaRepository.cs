@@ -10,7 +10,7 @@ namespace Financas.Repositories
     public class ContaRepository : IContaRepository
     {
         private readonly IDbConnectionProvider _connection;
-        string sql = "";
+        string SQL = "";
 
         public ContaRepository(IDbConnectionProvider connection)
         {
@@ -21,9 +21,17 @@ namespace Financas.Repositories
         {
             try
             {
-                sql = "";
-                sql = "INSERT INTO Conta (Nome, Principal, Balanco, UsuarioId) VALUES (@Nome,@Principal,@Balanco,@UsuarioId)";
-                _connection.Connection.Query<Conta>(sql, conta);
+                SQL = "";
+                SQL = "INSERT INTO Conta (Nome, Principal, Balanco, UsuarioId) VALUES (@Nome,@Principal,@Balanco,@UsuarioId)";
+
+                if(_connection.CurrentTransaction == null)
+                {
+                    _connection.Connection.Query<Conta>(SQL, conta);
+                }
+                else
+                {
+                    _connection.Connection.Query<Conta>(SQL, conta, _connection.CurrentTransaction);
+                }
 
                 return true;
             }
@@ -37,9 +45,17 @@ namespace Financas.Repositories
         {
             try
             {
-                sql = "";
-                sql = "DELETE FROM Conta WHERE ContaId = @Id";
-                _connection.Connection.Execute(sql, new { Id = id });
+                SQL = "";
+                SQL = "DELETE FROM Conta WHERE ContaId = @Id";
+
+                if(_connection.CurrentTransaction == null)
+                {
+                    _connection.Connection.Execute(SQL, new { Id = id });
+                }
+                else
+                {
+                    _connection.Connection.Execute(SQL, new { Id = id }, _connection.CurrentTransaction);
+                }
 
                 return true;
             }
@@ -53,32 +69,71 @@ namespace Financas.Repositories
         {
             if(userId == null)
             {
-                sql = "";
-                sql = "SELECT * FROM Conta";
-                return _connection.Connection.Query<Conta>(sql).ToList();
+                SQL = "";
+                SQL = "SELECT * FROM Conta";
+
+                if(_connection.CurrentTransaction == null)
+                {
+                    return _connection.Connection.Query<Conta>(SQL).ToList();
+                }
+
+                return _connection.Connection.Query<Conta>(SQL, _connection.CurrentTransaction).ToList();
             }
             else
             {
-                sql = "";
-                sql = "SELECT * FROM Conta WHERE UsuarioId = @Id";
-                return _connection.Connection.Query<Conta>(sql, new { Id = userId }).ToList();
+                SQL = "";
+                SQL = "SELECT * FROM Conta WHERE UsuarioId = @Id";
+
+                if(_connection.CurrentTransaction == null)
+                {
+                    return _connection.Connection.Query<Conta>(SQL, new { Id = userId }).ToList();
+                }
+
+                return _connection.Connection.Query<Conta>(SQL, new { Id = userId }, _connection.CurrentTransaction).ToList();
             }
             
         }
 
         public Conta GetById(int id)
         {
-            sql = "";
-            sql = "SELECT * FROM Conta WHERE ContaId = @Id";
-            return _connection.Connection.QueryFirstOrDefault<Conta>(sql, new { Id = id });
+            SQL = "";
+            SQL = "SELECT * FROM Conta WHERE ContaId = @Id";
+
+            if (_connection.CurrentTransaction == null)
+            {
+                return _connection.Connection.QueryFirstOrDefault<Conta>(SQL, new { Id = id });
+            }
+
+            return _connection.Connection.QueryFirstOrDefault<Conta>(SQL, new { Id = id }, _connection.CurrentTransaction);
+        }
+
+        public double GetSaldoConta(int contaId)
+        {
+            SQL = "";
+            SQL = "SELECT Balanco FROM Conta WHERE ContaId = @Id";
+
+            if (_connection.CurrentTransaction == null)
+            {
+                return _connection.Connection.QueryFirstOrDefault<double>(SQL, new { Id = contaId });
+            }
+
+            return _connection.Connection.QueryFirstOrDefault<double>(SQL, new { Id = contaId }, _connection.CurrentTransaction);
         }
 
         public bool PossuiContaPrincipal(int id)
         {
-            sql = "";
-            sql = "SELECT COUNT(*) FROM CONTA C WHERE C.Principal = 1 AND C.UsuarioId = @Id";
+            SQL = "";
+            SQL = "SELECT COUNT(*) FROM CONTA C WHERE C.Principal = 1 AND C.UsuarioId = @Id";
 
-            var possuiConta = _connection.Connection.Query<int>(sql, new { Id = id }).Single();
+            int possuiConta = 0;
+            if(_connection.CurrentTransaction == null)
+            {
+                possuiConta = _connection.Connection.Query<int>(SQL, new { Id = id }).Single();
+            }
+            else
+            {
+                possuiConta = _connection.Connection.Query<int>(SQL, new { Id = id }, _connection.CurrentTransaction).Single();
+            }
             if(possuiConta == 0)
                 return false;
 
@@ -87,9 +142,18 @@ namespace Financas.Repositories
 
         public bool RemoverContaPreferida()
         {
-            sql = "";
-            sql = "UPDATE Conta SET Principal = 0 WHERE Principal = 1";
-            _connection.Connection.Execute(sql);
+            SQL = "";
+            SQL = "UPDATE Conta SET Principal = 0 WHERE Principal = 1";
+
+            if(_connection.CurrentTransaction == null)
+            {
+                _connection.Connection.Execute(SQL);
+            }
+            else
+            {
+                _connection.Connection.Execute(SQL, _connection.CurrentTransaction);
+            }
+
             return true;
         }
 
@@ -101,12 +165,12 @@ namespace Financas.Repositories
                 var parametros = new DynamicParameters();
                 parametros.Add("Id", ContaId);
 
-                sql = "";
-                sql = "UPDATE Conta SET ";
+                SQL = "";
+                SQL = "UPDATE Conta SET ";
 
-                if (conta.Nome.Length > 0)
+                if (conta.Nome != null && conta.Nome.Length == 0)
                 {
-                    sql += "Nome = @Nome,";
+                    SQL += "Nome = @Nome,";
                     parametros.Add("Nome", conta.Nome);
                     atualizar = true;
                 }
@@ -117,21 +181,34 @@ namespace Financas.Repositories
                         RemoverContaPreferida();
                     }
 
-                    sql += "Principal = @Principal,";
+                    SQL += "Principal = @Principal,";
                     parametros.Add("Princiapal", conta.Principal);
                     atualizar = true;
                 }
-            
+                if (conta.Balanco > 0)
+                {
+                    SQL += "Balanco = @Balanco,";
+                    parametros.Add("Balanco", conta.Balanco);
+                    atualizar = true;
+                }
+
                 if (!atualizar)
                     return false;
 
-                if (sql.EndsWith(","))
+                if (SQL.EndsWith(","))
                 {
-                    sql = sql.Remove(sql.Length - 1);
+                    SQL = SQL.Remove(SQL.Length - 1);
                 }
-                sql += " WHERE ContaId = @Id";
+                SQL += " WHERE ContaId = @Id";
 
-                _connection.Connection.Execute(sql, parametros);
+                if(_connection.CurrentTransaction == null)
+                {
+                    _connection.Connection.Execute(SQL, parametros);
+                }
+                else
+                {
+                    _connection.Connection.Execute(SQL, parametros, _connection.CurrentTransaction);
+                }
 
                 return true;
             }
@@ -143,10 +220,18 @@ namespace Financas.Repositories
 
         public bool VerificarExisteConta(int usuarioId, int contaId)
         {
-            sql = "";
-            sql = "SELECT COUNT(*) FROM Conta WHERE ContaId = @ContaId AND UsuarioId = @UsuarioId";
-            var possuiConta = _connection.Connection.Query<int>(sql, new { ContaId = contaId, UsuarioId = usuarioId }).Single();
+            SQL = "";
+            SQL = "SELECT COUNT(*) FROM Conta WHERE ContaId = @ContaId AND UsuarioId = @UsuarioId";
 
+            int possuiConta = 0;
+            if(_connection.CurrentTransaction == null)
+            {
+                possuiConta = _connection.Connection.Query<int>(SQL, new { ContaId = contaId, UsuarioId = usuarioId }).Single();
+            }
+            else
+            {
+                possuiConta = _connection.Connection.Query<int>(SQL, new { ContaId = contaId, UsuarioId = usuarioId }, _connection.CurrentTransaction).Single();
+            }
             if (possuiConta == 0)
                 return false;
 

@@ -10,7 +10,7 @@ namespace Financas.Repositories
     public class UsuarioRepository : IUsuarioRepository
     {
         private readonly IDbConnectionProvider _connection;
-        string sql = "";
+        string SQL = "";
 
         public UsuarioRepository(IDbConnectionProvider connection)
         {
@@ -21,9 +21,18 @@ namespace Financas.Repositories
         {
             try
             {
-                sql = "";
-                sql = "DELETE FROM Usuario WHERE UsuarioId = @Id";
-                _connection.Connection.Execute(sql, new { Id = id });
+                SQL = "";
+                SQL = "DELETE FROM Usuario WHERE UsuarioId = @Id";
+
+                if (_connection.CurrentTransaction == null)
+                {
+                    _connection.Connection.Execute(SQL, new { Id = id });
+                } 
+                else
+                {
+                    _connection.Connection.Execute(SQL, new { Id = id }, _connection.CurrentTransaction);
+                }
+
                 return true;
             }
             catch 
@@ -40,18 +49,18 @@ namespace Financas.Repositories
                 var parametros = new DynamicParameters();
                 parametros.Add("Id", id);
 
-                sql = "";
-                sql = "UPDATE Usuario SET ";
+                SQL = "";
+                SQL = "UPDATE Usuario SET ";
 
                 if(usuario.Nome.Length > 0)
                 {
-                    sql += "Nome = @Nome,";
+                    SQL += "Nome = @Nome,";
                     parametros.Add("Nome", usuario.Nome);
                     atualizar = true;
                 }
                 if (usuario.Email.Length > 0)
                 {
-                    sql += "Email = @Email,";
+                    SQL += "Email = @Email,";
                     parametros.Add("Email", usuario.Email);
                     atualizar = true;
                 }
@@ -59,7 +68,7 @@ namespace Financas.Repositories
                 {
                     var crypt = new CryptService();
                     var hash = crypt.CreateHashPassword(usuario.Senha);
-                    sql += "Senha = @Senha,";
+                    SQL += "Senha = @Senha,";
                     parametros.Add("Senha", hash);
                     atualizar = true;
                 }
@@ -67,13 +76,21 @@ namespace Financas.Repositories
                 if (!atualizar)
                     return false;
 
-                if (sql.EndsWith(","))
+                if (SQL.EndsWith(","))
                 {
-                    sql = sql.Remove(sql.Length - 1);
+                    SQL = SQL.Remove(SQL.Length - 1);
                 }
-                sql += " WHERE UsuarioId = @Id";
+                SQL += " WHERE UsuarioId = @Id";
 
-                _connection.Connection.Execute(sql, parametros);
+                if(_connection.CurrentTransaction == null)
+                {
+                    _connection.Connection.Execute(SQL, parametros);
+                    _connection.Connection.Execute(SQL, parametros);
+                }
+                else
+                {
+                    _connection.Connection.Execute(SQL, parametros, _connection.CurrentTransaction);
+                }
 
                 return true;
             }
@@ -85,30 +102,44 @@ namespace Financas.Repositories
 
         public List<Usuario> Get()
         {
-            sql = "";
-            sql = "SELECT * FROM Usuario";
-            return _connection.Connection.Query<Usuario>(sql).ToList();
+            SQL = "";
+            SQL = "SELECT * FROM Usuario";
+
+            if(_connection.CurrentTransaction == null)
+            {
+                return _connection.Connection.Query<Usuario>(SQL).ToList();
+            }
+
+            return _connection.Connection.Query<Usuario>(SQL, _connection.CurrentTransaction).ToList();
         }
 
         public Usuario GetByEmail(string email)
         {
-            sql = "";
-            sql = "SELECT * FROM Usuario U WHERE U.Email = @Email";
-            return _connection.Connection.QueryFirstOrDefault<Usuario>(sql, new { Email = email });
+            SQL = "";
+            SQL = "SELECT * FROM Usuario U WHERE U.Email = @Email";
+
+            if(_connection.CurrentTransaction == null)
+            {
+                return _connection.Connection.QueryFirstOrDefault<Usuario>(SQL, new { Email = email });
+            }
+
+            return _connection.Connection.QueryFirstOrDefault<Usuario>(SQL, new { Email = email }, _connection.CurrentTransaction);
         }
 
         public Usuario GetById(int id)
         {
             Usuario usuario = null;
 
-            sql = "";
-            sql = "SELECT U.*, C.* FROM Usuario U LEFT JOIN Conta C ON U.UsuarioId = C.UsuarioId WHERE U.UsuarioId = @Id";
+            SQL = "";
+            SQL = "SELECT U.*, C.* FROM Usuario U LEFT JOIN Conta C ON U.UsuarioId = C.UsuarioId WHERE U.UsuarioId = @Id";
 
-            _connection.Connection.Query<Usuario, Conta, Usuario>(
-                sql,
+            if(_connection.CurrentTransaction == null)
+            {
+                _connection.Connection.Query<Usuario, Conta, Usuario>(
+                SQL,
                 (usuarioConsulta, contaConsulta) =>
                 {
-                    if(usuario == null)
+                    if (usuario == null)
                     {
                         usuario = usuarioConsulta;
                         usuario.Contas = new List<Conta>();
@@ -118,6 +149,26 @@ namespace Financas.Repositories
                 },
                 new { Id = id },
                 splitOn: "UsuarioId,ContaId");
+            }
+            else
+            {
+                _connection.Connection.Query<Usuario, Conta, Usuario>(
+               SQL,
+               (usuarioConsulta, contaConsulta) =>
+               {
+                   if (usuario == null)
+                   {
+                       usuario = usuarioConsulta;
+                       usuario.Contas = new List<Conta>();
+                   }
+                   usuario.Contas.Add(contaConsulta);
+                   return usuario;
+               },
+               new { Id = id },
+               _connection.CurrentTransaction,
+               splitOn: "UsuarioId,ContaId");
+            }
+           
 
             return usuario;
         }
@@ -126,11 +177,18 @@ namespace Financas.Repositories
         {
             try
             {
-                sql = "";
-                sql = @"INSERT INTO Usuario(Nome, Email, Senha, DataNascimento, DataCadastro)
+                SQL = "";
+                SQL = @"INSERT INTO Usuario(Nome, Email, Senha, DataNascimento, DataCadastro)
                     VALUES(@Nome, @Email, @Senha, @DataNascimento, @DataCadastro);";
          
-                _connection.Connection.Execute(sql, usuario);
+                if(_connection.CurrentTransaction == null)
+                {
+                    _connection.Connection.Execute(SQL, usuario);
+                }
+                else
+                {
+                    _connection.Connection.Execute(SQL, usuario, _connection.CurrentTransaction);
+                }
 
                 return true;
             }
@@ -142,9 +200,15 @@ namespace Financas.Repositories
 
         public int GetId(string email)
         {
-            sql = "";
-            sql = "SELECT UsuarioId FROM Usuario WHERE Email = @Email";
-            return _connection.Connection.QueryFirstOrDefault<int>(sql, new { Email = email});
+            SQL = "";
+            SQL = "SELECT UsuarioId FROM Usuario WHERE Email = @Email";
+
+            if(_connection.CurrentTransaction == null)
+            {
+                return _connection.Connection.QueryFirstOrDefault<int>(SQL, new { Email = email });
+            }
+
+            return _connection.Connection.QueryFirstOrDefault<int>(SQL, new { Email = email }, _connection.CurrentTransaction);
         }
     }
 }

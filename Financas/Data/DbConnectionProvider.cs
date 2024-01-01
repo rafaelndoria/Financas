@@ -15,6 +15,8 @@ public class DbConnectionProvider : IDbConnectionProvider
 
     public IDbConnection Connection => _connection;
 
+    public IDbTransaction CurrentTransaction { get; set; }
+
     public IDbTransaction BeginTransaction()
     {
         if (_transaction != null)
@@ -26,7 +28,7 @@ public class DbConnectionProvider : IDbConnectionProvider
         return _transaction;
     }
 
-    public void Commit()
+    public void CommitTransaction()
     {
         if (_transaction == null)
         {
@@ -45,7 +47,7 @@ public class DbConnectionProvider : IDbConnectionProvider
         }
     }
 
-    public void Rollback()
+    public void RollbackTransaction()
     {
         if (_transaction == null)
         {
@@ -54,5 +56,10 @@ public class DbConnectionProvider : IDbConnectionProvider
 
         _transaction.Rollback();
         _transaction = null;
+    }
+
+    public void SetTransaction(IDbTransaction transaction)
+    {
+        CurrentTransaction = transaction;
     }
 }

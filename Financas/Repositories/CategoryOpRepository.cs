@@ -8,7 +8,7 @@ namespace Financas.Repositories
     public class CategoriaOpRepository : ICategoriaOpRepository
     {
         private readonly IDbConnectionProvider _connection;
-        string sql = "";
+        string SQL = "";
 
         public CategoriaOpRepository(IDbConnectionProvider connection)
         {
@@ -17,9 +17,15 @@ namespace Financas.Repositories
 
         public List<CategoriaOp> Get()
         {
-            sql = "";
-            sql = "SELECT * FROM CategoriaOp";
-            return _connection.Connection.Query<CategoriaOp>(sql).ToList();
+            SQL = "";
+            SQL = "SELECT * FROM CategoriaOp";
+
+            if(_connection.CurrentTransaction == null)
+            {
+                return _connection.Connection.Query<CategoriaOp>(SQL).ToList();
+            }
+
+            return _connection.Connection.Query<CategoriaOp>(SQL, _connection.CurrentTransaction).ToList();
         }
     }
 }

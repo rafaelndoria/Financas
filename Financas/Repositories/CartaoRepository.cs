@@ -3,13 +3,14 @@ using Financas.Data;
 using Financas.Models;
 using Financas.Repositories.Interfaces;
 using Financas.ViewModels;
+using System.Data;
 
 namespace Financas.Repositories
 {
     public class CartaoRepository : ICartaoRepository
     {
         private readonly IDbConnectionProvider _connection;
-        string sql = "";
+        string SQL = "";
 
         public CartaoRepository(IDbConnectionProvider connection)
         {
@@ -20,9 +21,18 @@ namespace Financas.Repositories
         {
             try
             {
-                sql = "";
-                sql = "DELETE FROM Cartao WHERE CartaoId = @Id";
-                _connection.Connection.Execute(sql, new { Id = cartaoId });
+                SQL = "";
+                SQL = "DELETE FROM Cartao WHERE CartaoId = @Id";
+
+                if (_connection.CurrentTransaction == null)
+                {
+                    _connection.Connection.Execute(SQL, new { Id = cartaoId });
+                }
+                else
+                {
+                    _connection.Connection.Execute(SQL, new { Id = cartaoId }, _connection.CurrentTransaction);
+                }
+                    
                 return true;
             }
             catch
@@ -34,40 +44,84 @@ namespace Financas.Repositories
 
         public List<Cartao> Get()
         {
-            sql = "";
-            sql = "SELECT * FROM Cartao";
-            return _connection.Connection.Query<Cartao>(sql).ToList();
+            SQL = "";
+            SQL = "SELECT * FROM Cartao";
+
+            if(_connection.CurrentTransaction == null)
+            {
+                return _connection.Connection.Query<Cartao>(SQL).ToList();
+            }
+
+            return _connection.Connection.Query<Cartao>(SQL, _connection.CurrentTransaction).ToList();
         }
 
         public Cartao GetById(int id)
         {
-            sql = "";
-            sql = "SELECT * FROM Cartao WHERE CartaoId = @Id";
-            return _connection.Connection.QueryFirst<Cartao>(sql, new { Id = id });
+            SQL = "";
+            SQL = "SELECT * FROM Cartao WHERE CartaoId = @Id";
+
+            if(_connection.CurrentTransaction == null)
+            {
+                return _connection.Connection.QueryFirst<Cartao>(SQL, new { Id = id });
+            }
+
+            return _connection.Connection.QueryFirst<Cartao>(SQL, new { Id = id }, _connection.CurrentTransaction);
         }
 
         public int GetCartaoPrincipal(int usuarioId)
         {
-            sql = "";
-            sql = "SELECT C.CartaoId FROM Cartao C JOIN Conta CT ON C.ContaId = CT.ContaId WHERE C.Principal = 1 AND CT.UsuarioId = @Id";
-            return _connection.Connection.QueryFirstOrDefault<int>(sql, new { Id = usuarioId});
+            SQL = "";
+            SQL = "SELECT C.CartaoId FROM Cartao C JOIN Conta CT ON C.ContaId = CT.ContaId WHERE C.Principal = 1 AND CT.UsuarioId = @Id";
+
+            if (_connection.CurrentTransaction == null)
+            {
+                return _connection.Connection.QueryFirstOrDefault<int>(SQL, new { Id = usuarioId });
+            }
+            
+            return _connection.Connection.QueryFirstOrDefault<int>(SQL, new { Id = usuarioId }, _connection.CurrentTransaction);
         }
 
         public List<Cartao> GetCartaoUsuarioLogado(int usuarioId)
         {
-            sql = "";
-            sql = "SELECT Cc.* FROM Cartao Cc JOIN Conta C ON Cc.ContaId = C.ContaId WHERE C.UsuarioId = @Id";
-            return _connection.Connection.Query<Cartao>(sql, new { Id = usuarioId }).ToList();
+            SQL = "";
+            SQL = "SELECT Cc.* FROM Cartao Cc JOIN Conta C ON Cc.ContaId = C.ContaId WHERE C.UsuarioId = @Id";
+
+            if(_connection.CurrentTransaction == null)
+            {
+                return _connection.Connection.Query<Cartao>(SQL, new { Id = usuarioId }).ToList();
+            }
+
+            return _connection.Connection.Query<Cartao>(SQL, new { Id = usuarioId }, _connection.CurrentTransaction).ToList();
+        }
+
+        public int GetDataVencimento(int cartaoId)
+        {
+            SQL = "";
+            SQL = "SELECT Vencimento From Cartao WHERE CartaoId = @Id";
+
+            if(_connection.CurrentTransaction == null)
+            {
+                return _connection.Connection.QueryFirstOrDefault<int>(SQL, new { Id = cartaoId });
+            }
+
+            return _connection.Connection.QueryFirstOrDefault<int>(SQL, new { Id = cartaoId }, _connection.CurrentTransaction);
         }
 
         public bool Insert(Cartao cartao)
         {
             try
             {
-                sql = "";
-                sql = "INSERT INTO Cartao (Nome, LimiteCredito, Principal, LimiteCreditoAtual, ContaId) VALUES (@Nome, @LimiteCredito, @Principal, @LimiteCreditoAtual, @ContaId)";
+                SQL = "";
+                SQL = "INSERT INTO Cartao (Nome, LimiteCredito, Principal, LimiteCreditoAtual, DiaVencimento, ContaId) VALUES (@Nome, @LimiteCredito, @Principal, @LimiteCreditoAtual, @DiaVencimento, @ContaId)";
 
-                _connection.Connection.Execute(sql, cartao);
+                if(_connection.CurrentTransaction == null)
+                {
+                    _connection.Connection.Execute(SQL, cartao);
+                }
+                else
+                {
+                    _connection.Connection.Execute(SQL, cartao, _connection.CurrentTransaction);
+                }
 
                 return true;
             }
@@ -79,9 +133,18 @@ namespace Financas.Repositories
 
         public bool PossuiCartaoPrincipal(int contaId)
         {
-            sql = "";
-            sql = "SELECT COUNT(*) FROM Cartao WHERE ContaId = @Id AND Principal = 1";
-            var possuiCartao = _connection.Connection.Query<int>(sql, new { Id = contaId }).Single();
+            SQL = "";
+            SQL = "SELECT COUNT(*) FROM Cartao WHERE ContaId = @Id AND Principal = 1";
+
+            int possuiCartao = 0;
+            if(_connection.CurrentTransaction == null)
+            {
+                possuiCartao = _connection.Connection.Query<int>(SQL, new { Id = contaId }).Single();
+            }
+            else
+            {
+                possuiCartao = _connection.Connection.Query<int>(SQL, new { Id = contaId }, _connection.CurrentTransaction).Single();
+            }
 
             if (possuiCartao == 0)
                 return false;
@@ -93,9 +156,18 @@ namespace Financas.Repositories
         {
             try
             {
-                sql = "";
-                sql = "UPDATE Cartao SET Principal = 0 WHERE Principal = 1";
-                _connection.Connection.Execute(sql);
+                SQL = "";
+                SQL = "UPDATE Cartao SET Principal = 0 WHERE Principal = 1";
+
+                if(_connection.CurrentTransaction == null)
+                {
+                    _connection.Connection.Execute(SQL);
+                }
+                else
+                {
+                    _connection.Connection.Execute(SQL, _connection.CurrentTransaction);
+                }
+
                 return true;
             }
             catch
@@ -112,12 +184,12 @@ namespace Financas.Repositories
                 var parametros = new DynamicParameters();
                 parametros.Add("Id", cartaoId);
 
-                sql = "";
-                sql = "UPDATE Cartao SET ";
+                SQL = "";
+                SQL = "UPDATE Cartao SET ";
 
                 if (cartao.Nome.Length > 0)
                 {
-                    sql += "Nome = @Nome,";
+                    SQL += "Nome = @Nome,";
                     parametros.Add("Nome", cartao.Nome);
                     atualizar = true;
                 }
@@ -128,33 +200,40 @@ namespace Financas.Repositories
                         RemoverCartaoPreferido();
                     }
 
-                    sql += "Principal = @Principal,";
+                    SQL += "Principal = @Principal,";
                     parametros.Add("Princiapal", cartao.Principal);
                     atualizar = true;
                 }
                 if (cartao.LimiteCredito > 0)
                 {
-                    sql += "LimiteCredito = @LimiteCredito,";
+                    SQL += "LimiteCredito = @LimiteCredito,";
                     parametros.Add("LimiteCredito", cartao.LimiteCredito);
                     atualizar = true;
                 }
-                if (cartao.DataVencimento.Length > 0)
+                if (cartao.DiaVencimento == 0)
                 {
-                    sql += "DataVencimento = @DataVencimento,";
-                    parametros.Add("DataVencimento", DateTime.Parse(cartao.DataVencimento));
+                    SQL += "DataVencimento = @DataVencimento,";
+                    parametros.Add("DataVencimento", cartao.DiaVencimento);
                     atualizar = true;
                 }
 
                 if (!atualizar)
                     return false;
 
-                if (sql.EndsWith(","))
+                if (SQL.EndsWith(","))
                 {
-                    sql = sql.Remove(sql.Length - 1);
+                    SQL = SQL.Remove(SQL.Length - 1);
                 }
-                sql += " WHERE CartaoId = @Id";
+                SQL += " WHERE CartaoId = @Id";
 
-                _connection.Connection.Execute(sql, parametros);
+                if(_connection.CurrentTransaction == null)
+                {
+                    _connection.Connection.Execute(SQL, parametros);
+                }
+                else
+                {
+                    _connection.Connection.Execute(SQL, parametros, _connection.CurrentTransaction);
+                }
 
                 return true;
             }

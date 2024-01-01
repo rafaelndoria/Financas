@@ -8,7 +8,7 @@ namespace Financas.Repositories
     public class TipoOpRepository : ITipoOpRepository
     {
         private readonly IDbConnectionProvider _connection;
-        string sql = "";
+        string SQL = "";
 
         public TipoOpRepository(IDbConnectionProvider connection)
         {
@@ -17,9 +17,15 @@ namespace Financas.Repositories
 
         public List<TipoOp> Get()
         {
-            sql = "";
-            sql = "SELECT * FROM TipoOp";
-            return _connection.Connection.Query<TipoOp>(sql).ToList();
+            SQL = "";
+            SQL = "SELECT * FROM TipoOp";
+
+            if(_connection.CurrentTransaction == null)
+            {
+                return _connection.Connection.Query<TipoOp>(SQL).ToList();
+            }
+
+            return _connection.Connection.Query<TipoOp>(SQL, _connection.CurrentTransaction).ToList();
         }
     }
 }
