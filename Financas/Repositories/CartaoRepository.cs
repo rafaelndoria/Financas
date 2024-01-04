@@ -97,7 +97,7 @@ namespace Financas.Repositories
         public int GetDataVencimento(int cartaoId)
         {
             SQL = "";
-            SQL = "SELECT Vencimento From Cartao WHERE CartaoId = @Id";
+            SQL = "SELECT DiaVencimento From Cartao WHERE CartaoId = @Id";
 
             if(_connection.CurrentTransaction == null)
             {
@@ -187,7 +187,7 @@ namespace Financas.Repositories
                 SQL = "";
                 SQL = "UPDATE Cartao SET ";
 
-                if (cartao.Nome.Length > 0)
+                if (cartao.Nome != null && cartao.Nome.Length > 0)
                 {
                     SQL += "Nome = @Nome,";
                     parametros.Add("Nome", cartao.Nome);
@@ -210,7 +210,13 @@ namespace Financas.Repositories
                     parametros.Add("LimiteCredito", cartao.LimiteCredito);
                     atualizar = true;
                 }
-                if (cartao.DiaVencimento == 0)
+                if (cartao.LimiteCreditoAtual > 0)
+                {
+                    SQL += "LimiteCreditoAtual = @LimiteCreditoAtual,";
+                    parametros.Add("LimiteCreditoAtual", cartao.LimiteCreditoAtual);
+                    atualizar = true;
+                }
+                if (cartao.DiaVencimento != 0)
                 {
                     SQL += "DataVencimento = @DataVencimento,";
                     parametros.Add("DataVencimento", cartao.DiaVencimento);

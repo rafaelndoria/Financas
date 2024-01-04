@@ -25,5 +25,15 @@
         public Cartao Cartao { get; private set; }
 
         public List<PagamentoFatura> PagamentoFaturas { get; private set; }
+
+        public void AdicionarFatura(double valor)
+        {
+            Valor += valor;
+        }
+
+        public void RemoverValorFatura(double valor)
+        {
+            Valor -= valor;
+        }
     }
 }

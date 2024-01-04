@@ -40,7 +40,7 @@ namespace Financas.Controllers
                         return BadRequest("Pode conter apenas um cartão como principal");
                 }
 
-                var cartao = new Cartao(model.Nome, model.LimiteCredito, model.Principal, DateTime.Parse(model.DataVencimento), (int)model.ContaId, model.LimiteCreditoAtual);
+                var cartao = new Cartao(model.Nome, model.LimiteCredito, model.Principal, model.DiaVencimento, (int)model.ContaId, model.LimiteCreditoAtual);
 
                 _cartaoRepository.Insert(cartao);
 

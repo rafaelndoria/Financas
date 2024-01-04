@@ -1,0 +1,1 @@
+﻿SELECT Balanco FROM Conta

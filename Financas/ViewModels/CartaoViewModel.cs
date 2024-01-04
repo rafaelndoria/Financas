@@ -7,7 +7,7 @@
         public int Principal { get; set; }
         public double? LimiteCreditoAtual { get; set; }
         public int? ContaId { get; set; }
-        public string DataVencimento { get; set; }
+        public int DiaVencimento { get; set; }
 
     }
 }

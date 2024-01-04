@@ -6,21 +6,17 @@
         {
             
         }
-        public OpCartao(string descricao, double valor, DateTime dataOp, int parcelado, int quantidade, int parcela, int cartaoId, Cartao cartao, int categoriaOpId, CategoriaOp categoriaOp, int tipoOpCartaoId, TipoOpCartao tipoOpCartao)
+        public OpCartao(string descricao, double valor, DateTime dataOp, int parcelado, int quantidadeParcelas, int cartaoId, int categoriaOpId, int tipoOpCartaoId)
         {
             Descricao = descricao;
             Valor = valor;
             DataOp = dataOp;
             Parcelado = parcelado;
-            Quantidade = quantidade;
-            Parcela = parcela;
-            ValorPorParcela = Parcelado == 1 ? (Valor / Quantidade) : Valor;
+            QuantidadeParcelas = quantidadeParcelas;
+            ValorPorParcela = Parcelado == 1 ? (Valor / QuantidadeParcelas) : Valor;
             CartaoId = cartaoId;
-            Cartao = cartao;
             CategoriaOpId = categoriaOpId;
-            CategoriaOp = categoriaOp;
             TipoOpCartaoId = tipoOpCartaoId;
-            TipoOpCartao = tipoOpCartao;
         }
 
         public int OpCartaoId { get; private set; }
@@ -28,8 +24,7 @@
         public double Valor { get; private set; }
         public DateTime DataOp { get; private set; }
         public int Parcelado { get; private set; }
-        public int Quantidade { get; private set; }
-        public int Parcela { get; private set; }
+        public int QuantidadeParcelas { get; private set; }
         public double? ValorPorParcela { get; private set; }
 
         public int CartaoId { get; private set; }

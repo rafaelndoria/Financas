@@ -2,6 +2,7 @@ using Financas.Data;
 using Financas.Repositories;
 using Financas.Repositories.Interfaces;
 using Financas.Services;
+using Financas.ViewModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using SegurancaJWT.Services;
@@ -24,6 +25,10 @@ builder.Services.AddScoped<IContaRepository, ContaRepository>();
 builder.Services.AddScoped<ICartaoRepository, CartaoRepository>();
 builder.Services.AddScoped<ITipoOpCartaoRepository, TipoOpCartaoRepository>();
 builder.Services.AddScoped<ITipoOpRepository, TipoOpRepository>();
+builder.Services.AddScoped<IOpCartaoRepository, OpCartaoRepository>();
+builder.Services.AddScoped<IFaturaRepository, FaturaRepository>();
+builder.Services.AddScoped<ITituloRepository, TituloRepository>();
+builder.Services.AddScoped<IPagamentoFaturaRepository, PagamentoFaturaRepository>();
 
 builder.Services.AddTransient<JwtTokenService>();
 builder.Services.AddAuthentication(opt =>
