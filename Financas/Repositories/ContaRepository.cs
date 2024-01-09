@@ -107,6 +107,21 @@ namespace Financas.Repositories
             return _connection.Connection.QueryFirstOrDefault<Conta>(SQL, new { Id = id }, _connection.CurrentTransaction);
         }
 
+        public int GetContaPrincipal(int usuarioId)
+        {
+            SQL = "";
+            SQL = "SELECT C.ContaId FROM Conta C WHERE C.Principal = 1 AND C.UsuarioId = @Id";
+
+            if(_connection.CurrentTransaction == null)
+            {
+                return _connection.Connection.QueryFirstOrDefault<int>(SQL, new { Id = usuarioId });
+            }
+            else
+            {
+                return _connection.Connection.QueryFirstOrDefault<int>(SQL, new { Id = usuarioId }, _connection.CurrentTransaction);
+            }
+        }
+
         public double GetSaldoConta(int contaId)
         {
             SQL = "";

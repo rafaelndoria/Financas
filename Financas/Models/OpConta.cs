@@ -6,17 +6,14 @@
         {
             
         }
-        public OpConta(string descricao, double valor, DateTime dataOp, int contaId, Conta conta, int categoriaOpId, CategoriaOp categoriaOp, int tipoOpId, TipoOp tipoOp)
+        public OpConta(string descricao, double valor, DateTime dataOp, int contaId, int categoriaOpId, int tipoOpId)
         {
             Descricao = descricao;
             Valor = valor;
             DataOp = dataOp;
             ContaId = contaId;
-            Conta = conta;
             CategoriaOpId = categoriaOpId;
-            CategoriaOp = categoriaOp;
             TipoOpId = tipoOpId;
-            TipoOp = tipoOp;
         }
 
         public int OpContaId { get; private set; }

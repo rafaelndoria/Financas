@@ -35,5 +35,10 @@
         {
             Balanco -= valor;
         }
+
+        public void AdicionarReceita(double valor)
+        {
+            Balanco += valor;
+        }
     }
 }

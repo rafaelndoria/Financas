@@ -29,6 +29,7 @@ builder.Services.AddScoped<IOpCartaoRepository, OpCartaoRepository>();
 builder.Services.AddScoped<IFaturaRepository, FaturaRepository>();
 builder.Services.AddScoped<ITituloRepository, TituloRepository>();
 builder.Services.AddScoped<IPagamentoFaturaRepository, PagamentoFaturaRepository>();
+builder.Services.AddScoped<IOpContaRepository, OpContaRepository>();
 
 builder.Services.AddTransient<JwtTokenService>();
 builder.Services.AddAuthentication(opt =>

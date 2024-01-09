@@ -14,5 +14,6 @@ namespace Financas.Repositories.Interfaces
         bool VerificarExisteConta(int usuarioId, int contaId);
         bool RemoverContaPreferida();
         double GetSaldoConta(int contaId);
+        int GetContaPrincipal(int usuarioId);
     }
 }
